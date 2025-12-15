@@ -1,9 +1,21 @@
-import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Pool, PoolClient } from 'pg';
 
 @Injectable()
-export class DatabaseService implements OnModuleDestroy {
+export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private pool: Pool | null = null;
+
+  constructor(private configService: ConfigService) {}
+
+  /**
+   * Initialize pool on module startup
+   */
+  async onModuleInit() {
+    const connectionString = this.configService.get<string>('DATABASE_URL') || '';
+    this.initializePool(connectionString);
+    console.log('Database pool initialized');
+  }
 
   /**
    * Initialize the database connection pool
