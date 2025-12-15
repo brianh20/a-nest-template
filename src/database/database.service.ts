@@ -70,6 +70,19 @@ export class DatabaseService implements OnModuleDestroy {
   }
 
   /**
+   * Execute a query using the connection pool
+   * @param text SQL query string
+   * @param params Query parameters
+   * @returns Query result
+   */
+  async query(text: string, params?: any[]) {
+    if (!this.pool) {
+      throw new Error('Database pool not initialized. Call initializePool() first.');
+    }
+    return this.pool.query(text, params);
+  }
+
+  /**
    * Clean up database connections when module is destroyed
    */
   async onModuleDestroy(): Promise<void> {
